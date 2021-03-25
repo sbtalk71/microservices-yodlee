@@ -2,15 +2,14 @@ package com.demo.spring;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
+import org.springframework.cloud.openfeign.EnableFeignClients;
 
 @SpringBootApplication
-@EnableEurekaClient
-
-public class EmpDataServiceApplication {
+@EnableFeignClients
+public class JsonplaceholderClientApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(EmpDataServiceApplication.class, args);
+		SpringApplication.run(JsonplaceholderClientApplication.class, args);
 	}
 
 }

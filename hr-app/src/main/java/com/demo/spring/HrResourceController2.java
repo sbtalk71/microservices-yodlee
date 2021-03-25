@@ -1,0 +1,68 @@
+package com.demo.spring;
+
+import java.util.HashMap;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.RestTemplate;
+
+import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
+import com.netflix.hystrix.contrib.javanica.annotation.HystrixProperty;
+
+@RestController
+@RequestMapping("/hr2")
+public class HrResourceController2 {
+
+	@Autowired
+	EmpDataFeignClient client;
+
+	@GetMapping(path = "/details", produces = MediaType.APPLICATION_JSON_VALUE)
+	//@HystrixCommand(fallbackMethod = "fallbackGetEmpDetails", commandProperties = {
+			//@HystrixProperty(name = "circuitBreaker.sleepWindowInMilliseconds", value = "5000"),
+			//@HystrixProperty(name = "circuitBreaker.requestVolumeThreshold", value = "3") })
+	// @HystrixProperty(name =
+	// "hystrix.command.default.circuitBreaker.sleepWindowInMilliseconds",
+	// value="60000"),
+	public ResponseEntity<String> getEmpDetails(@RequestParam("eid") int id) {
+		
+		return client.findEmpById(id);
+	}
+
+	/*
+	@PostMapping(path = "/register", produces = MediaType.TEXT_PLAIN_VALUE)
+	public ResponseEntity<String> registerEmp(@RequestParam("id") int id, @RequestParam("name") String name,
+			@RequestParam("city") String city, @RequestParam("salary") double salary) {
+
+		HttpHeaders headers = new HttpHeaders();
+		headers.set("Accept", MediaType.TEXT_PLAIN_VALUE);
+		headers.set("Content-Type", MediaType.APPLICATION_JSON_VALUE);
+
+		HashMap<String, Object> data = new HashMap<>();
+		data.put("empId", id);
+		data.put("name", name);
+		data.put("city", city);
+		data.put("salary", salary);
+
+		HttpEntity req = new HttpEntity(data, headers);
+
+		ResponseEntity<String> resp = rt.exchange("http://empdata.com/emp/save", HttpMethod.POST, req, String.class);
+		return resp;
+	}
+*/
+	// Hystrix Fallback methods
+
+	ResponseEntity<String> fallbackGetEmpDetails(int id) {
+
+		System.out.println("Circuit Breaker working...");
+		return ResponseEntity.ok("Service Unavailable, Try after sometime..");
+	}
+}
