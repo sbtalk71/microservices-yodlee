@@ -1,0 +1,19 @@
+server:
+  port: 9191
+  
+spring:  application:    name: zuul-proxy
+    
+eureka:  client:    register-with-eureka: true
+    service-url:      defaultZone: http://localhost:8761/eureka/
+      
+zuul:
+  prefix: /app
+  routes:    google:
+      path: /redirect/**  #http://localhost:9191/app/redirect/
+      location: http://www.google.co.in
+    emp-service-route:
+      path: /service/**
+      location: empdata.com #http://localhost:9191/app/service/-->http://localhost:8182/
+    hr-app-route:
+      path: /client/**
+      location: hr-service
