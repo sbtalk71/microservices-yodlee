@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.demo.spring.entity.Emp;
 import com.demo.spring.repo.EmpRepository;
+import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 
 @RestController
 @RequestMapping("/emp")
@@ -28,6 +29,7 @@ public class EmpDataResource {
 
 	// @RequestMapping(path="/find/{id}",method=RequestMethod.GET,produces=MediaType.APPLICATION_JSON_VALUE)
 	@GetMapping(path = "/find/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+	@HystrixCommand(fallbackMethod = "fallbackFindEmpById")
 	public ResponseEntity findEmpById(@PathVariable("id") int id) {
 		Optional<Emp> op = repo.findById(id);
 		if (op.isPresent()) {
@@ -76,5 +78,9 @@ public class EmpDataResource {
 	@ExceptionHandler(RuntimeException.class)
 	private ResponseEntity handleEmpNotFound(RuntimeException ex) {
 		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
+	}
+	
+	public ResponseEntity fallbackFindEmpById( int id) {
+		return ResponseEntity.ok("Back end Server Unavailable");
 	}
 }
